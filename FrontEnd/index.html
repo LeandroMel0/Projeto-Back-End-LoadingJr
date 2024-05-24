@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Minha Página</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="d-flex justify-content-between align-items-center p-3">
+        <div class="container-fluid">
+            <a href="/"><h1 class="title">Projeto Back-End Loading Jr</h1></a>
+        </div>
+        <div class="d-flex ms-auto">
+            <a href="/Login" class="btn btn-primary me-2">Login</a>
+            <a href="/Registro" class="btn btn-secondary">Register</a>
+        </div>
+    </header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="fetchData()">Listar posts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="CadastrarPostagem">Cadastrar postagem</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="fetchDataPag(1,3)">Lista Paginada de posts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/UsersTable">Gerenciar Usuários</a>
+                    </li>
+                </ul>
+                <form class="d-flex ms-auto">
+                    <input id="SearchInput" class="form-control me-2" type="search" placeholder="Pesquisar" aria-label="Pesquisar">
+                    <button class="btn btn-light" onclick="Pesquisar()" type="submit">Pesquisar</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+    <section>
+        <div class="container" id="container-principal">
+            <div class="row" id="dados-container">
+            </div>
+        </div>
+    </section>
+
+    <script>
+
+
+        // Função para buscar e exibir todos os posts
+        async function fetchData() {
+            try {
+                const response = await fetch('/postagens');
+                if (!response.ok) {
+                    throw new Error('Erro na solicitação');
+                }
+                const data = await response.json();
+                displayData(data);
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
+            }
+        }
+
+        //função para exibir os dados paginados
+        async function fetchDataPag(PagNunder, PostPerPage) {
+            try {
+                const response = await fetch(`/postagens?PagNumber=${PagNunder}&PostPerPage=${PostPerPage}`);
+                //console.log(response.status)
+                if(response.status == 416){
+                    console.log("Fim da tabela")
+                    return
+                }
+                if (!response.ok) {
+                    throw new Error('Erro na solicitação');
+                }
+                const data = await response.json();
+
+                displayData(data);
+                CreateButtons(PagNunder,PostPerPage)
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
+            }
+        }
+        // Função para escrever os dados
+        function displayData(data) {
+            const container = document.getElementById('dados-container');
+            container.innerHTML = '';
+            data.forEach(item => {
+                const postDiv = document.createElement('div');
+                postDiv.classList.add('post-item');
+                postDiv.id = item.uuid;
+
+            
+                const img = document.createElement('img');
+                img.src = `/imagens/${item.uuid}`;
+                img.alt = item.title;
+
+                
+
+                const postDetails = document.createElement('div');
+                postDetails.classList.add('post-details');
+
+                const title = document.createElement('div');
+                title.classList.add('post-title');
+                title.textContent = item.title;
+
+                const type = document.createElement('div');
+                type.classList.add('post-type');
+                type.textContent = item.post_type;
+
+                const description = document.createElement('div');
+                description.classList.add('post-description');
+                description.textContent = item.description;
+
+                const dates = document.createElement('div');
+                dates.classList.add('post-dates');
+                dates.innerHTML = `Criado por ${item.post_by}, em: ${item.post_date} <br> Modificado por ${item.att_by}, em: ${item.att_date}`;
+
+                const postButtons = document.createElement('div');
+                postButtons.classList.add('post-buttons');
+
+                const editButton = document.createElement('a');
+                editButton.href = '#';
+                editButton.classList.add('btn', 'btn-primary');
+                editButton.textContent = 'Alterar';
+                editButton.href = `/EditarPostagem?PostId=${item.uuid}`;
+
+
+                const removeButton = document.createElement('a');
+                removeButton.href = '#';
+                removeButton.classList.add('btn', 'btn-danger');
+                removeButton.textContent = 'Remover';
+                removeButton.onclick = () => {DeletElement(postDiv.id)};
+
+                postButtons.appendChild(editButton);
+                postButtons.appendChild(removeButton);
+
+                postDetails.appendChild(title);
+                postDetails.appendChild(description);
+                postDetails.appendChild(type);
+                postDetails.appendChild(dates);
+
+                if(item.imagem == true){
+                    postDiv.appendChild(img);
+                }
+
+
+                postDiv.appendChild(postDetails);
+                postDiv.appendChild(postButtons);
+
+                container.appendChild(postDiv);
+            });
+        }
+
+        //Função que tedeleta os elementos
+        async function DeletElement(id){
+            const token = localStorage.getItem('jwtToken');
+            const postDiv = document.getElementById(id);
+            try{
+                
+                const response = await fetch(`/DeletarPostagem/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+					'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`       
+				}
+                });
+                if (!response.ok) {
+                    throw new Error('Erro na solicitação');
+                }else{
+                    postDiv.classList.add('removing');
+                }
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
+            }
+        }
+
+        function CreateButtons(PagNunder,PostPerPage){
+            const container = document.getElementById('dados-container');
+                    const postButtons = document.createElement('div');
+                    postButtons.classList.add('post-buttons');
+
+                    const ReturnBnt = document.createElement('a');
+                    ReturnBnt.href = '#';
+                    ReturnBnt.classList.add('btn', 'btn-warning');
+                    ReturnBnt.textContent = '<';
+                    ReturnBnt.onclick = function() {
+                        fetchDataPag(Math.max(PagNunder - 1, 1),PostPerPage);
+                    };
+
+                    const Adbtn = document.createElement('a');
+                    Adbtn.href = '#';
+                    Adbtn.classList.add('btn', 'btn-danger');
+                    Adbtn.textContent = '>';
+                    Adbtn.onclick = () => {fetchDataPag(PagNunder+1,PostPerPage)};
+
+                    postButtons.appendChild(ReturnBnt);
+                    postButtons.appendChild(Adbtn);
+
+                    container.appendChild(postButtons);
+                
+        }
+
+        async function Pesquisar(){
+
+            var SearchValue = document.getElementById('SearchInput').value
+            try {
+                const response = await fetch(`/postagens?search=${SearchValue}`);
+                if (!response.ok) {
+                    throw new Error('Erro na solicitação');
+                }
+                const data = await response.json();
+                displayData(data);
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+POST http://localhost:3333/Login
+Content-Type: application/json
+
+{
+    "username": "geilma",
+    "password": "0007"
+}
+
+###
+
+POST http://localhost:3333/Registro
+//Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxlYW5kcm8iLCJwZXJtaXNzaW9uIjoyLCJpYXQiOjE3MTY0OTQzMDIsImV4cCI6MTcxNjQ5NDMzMn0.EQhVvguw9ApqsgU8Lt5ZhtCU-whSWTa-CTYG5ZyzP0U
+Content-Type: application/json
+
+{
+    "username": "test",
+    "password": "0007"
+}
+###
+DELETE http://localhost:3333/DeleteUser/test
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdlaWxtYSIsInBlcm1pc3Npb24iOjAsImlhdCI6MTcxNjQ5NjY3MywiZXhwIjoxNzE2NTAwMjczfQ.i6CtpajrB9PCy3PBmgBGrZSVWBlrsqMAgnwIDV7lRtg
+Content-Type:application/json
+
+
+###
+DELETE http://localhost:3333/postagem/6
+

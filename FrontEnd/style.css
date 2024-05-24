@@ -1,0 +1,92 @@
+/* Estilos CSS podem ser adicionados aqui */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+}
+header {
+    background-color: #673bb7;
+    color: #fff;
+}
+header a {
+    text-decoration: none;
+    color: #f0f0f0;
+
+}
+.title-link {
+    max-width: 30px; /* Defina o máximo de largura que você achar adequado */
+    white-space: nowrap; /* Impede que o texto quebre em várias linhas */
+    overflow: hidden; /* Oculta qualquer conteúdo além da largura definida */
+    text-overflow: ellipsis; /* Adiciona "..." se o texto for cortado */
+}
+header a:hover {
+    text-decoration: none;
+    color: black;
+}   
+nav {
+    background-color: #673bb7;
+    padding: 10px;
+    text-align: center;
+}
+nav a {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 20px;
+}
+nav a:hover {
+    color: black;
+
+}
+section {
+    padding: 20px;
+}
+.post-item {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: #fff;
+}
+.post-item img {
+    max-width: 250px;
+    max-height: 250px;
+    margin-right: 20px;
+}
+.post-details {
+    flex: 1;
+}
+.post-title {
+    font-size: 1.25em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: black;
+}
+.post-description {
+    margin-bottom: 10px;
+    color: black;
+}
+.removing {
+    display: none;
+}
+.post-type{
+    font-size: 1em;
+    margin-bottom: 10px;
+    color: black;
+}
+.post-dates {
+    font-size: 0.9em;
+    color: black;
+    text-align: left;
+}
+.post-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+}
+.post-buttons a {
+    padding: 5px 10px;
+    margin-left: 5px
+    
+}

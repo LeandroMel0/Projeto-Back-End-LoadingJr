@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabela de Usuários</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="card">
+        <div class="card-body">
+            <div class="container mt-5">
+                <h1 class="mb-4">Usuários:</h1>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Permissões</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        <!-- Os dados dos usuários serão inseridos aqui -->
+                    </tbody>
+                </table>
+                <a href="/"><button class="bnt btn-secondary w-20">Voltar</button></a>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        // Recebendo valores do servidor
+        async function Getdata() {
+            const token = localStorage.getItem('jwtToken'); 
+    
+            try {
+                const response = await fetch('/ListUsers', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+    
+                if (!response.ok) {
+                    console.log('Falha na solicitação');
+                }
+    
+                const data = await response.json(); // Converter resposta em JSON
+                return data;
+    
+            } catch (error) {
+                console.log("Erro ao buscar os dados");
+            }
+        }
+    
+        window.onload = async () => {
+            const users = await Getdata();
+            fillTable(users);
+        };
+    
+        // Função para preencher a tabela com os dados dos usuários
+        function fillTable(users) {
+            const tableBody = document.getElementById('userTableBody');
+            tableBody.innerHTML = '';
+            users.forEach(user => {
+                var perms = ""
+                console.log(user.permission)
+                switch (user.permission){
+                    case 0:
+                        perms = "User"
+                        break;
+                    case 1:
+                        perms = "writer"
+                        break;
+                    case 2:
+                        perms = "admin"
+                        break;
+                    default:
+                        break;
+                }
+                const row = `
+                    <tr id="${user.username}">
+                        <td>${user.username}</td>
+                        <td>${perms}</td>
+                        <td>
+                            <a href="/UserUpdate?username=${user.username}" class="btn btn-primary btn-sm">Editar</a>
+                            <a onclick = "deleteUser('${user.username}')" class="btn btn-danger btn-sm">Excluir</a>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+    
+        async function deleteUser(username){
+            const token = localStorage.getItem('jwtToken');
+            const tr = document.getElementById(username);
+            
+            try {
+                const response = await fetch(`/DeleteUser/${username}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`       
+                    }
+                });
+    
+                if (!response.ok) {
+                    throw new Error('Erro na solicitação');
+                } else {
+                    tr.style.display = "none";
+                }
+            } catch (error) {
+                console.error('Erro ao buscar dados:', error);
+            }
+        }
+    </script>
+</body>
+</html>
