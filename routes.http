@@ -1,66 +1,54 @@
 ///### Toda rota que não seja GET exige o token, menos a rota de login ou registro
-
-//fazer login, retona o token
-POST https://projeto-back-end-loadingjr.onrender.com/Login
+@Url = https://projeto-back-end-loadingjr.onrender.com
+@Token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicGVybWlzc2lvbiI6MiwiaWF0IjoxNzE2NjcxMDM4LCJleHAiOjE3MTY2NzI4Mzh9.IkSR-sNkv6AXN_P36Cgy2ZJUz9Kx5jsGtOc6E8glYss
+POST {{Url}}/Login
 Content-Type: application/json
 
-//Request body
 {
-    "username": "Nome_de_usuário",
-    "password": "Senha"
+    "username": "admin",
+    "password": "adminpass"
 }
 
 ###
 
 //Criar uma postagem
-POST https://projeto-back-end-loadingjr.onrender.com/CriarPostagem
+POST {{Url}}/CriarPostagem
+Authorization: Bearer {{Token}}
+Content-Type: application/json
 
-//Token
-Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdlaWxtYSIsInBlcm1pc3Npb24iOjAsImlhdCI6MTcxNjQ5NjY3MywiZXhwIjoxNzE2NTAwMjczfQ.i6CtpajrB9PCy3PBmgBGrZSVWBlrsqMAgnwIDV7lRtg
-
-//Request body
     {
-        "title":"Titulo do post",
-        "description":"Descrição da postagem",
-        "post_type": "Tipo da postagem (edital, notícia, divulgação)",
-        "imagem": "Imagem (Opicional)"
+        "title": "Titulo do post",
+        "description": "Descrição da postagem",
+        "post_type": "1",
+        "imagem": "Mande a imagem aqui"
     }
 
 
 ###
 //Rota que retona posts
-GET https://projeto-back-end-loadingjr.onrender.com/postagens
+GET {{Url}}/postagens
 
-//Podem ser passados parametros pela url
-//Para lista paginada pagNumber, postPerPage
-//Para pesquisa search
-//Se não forem passados parametros sera retornada toda a lista de posts
 
 ###
 //Rota para edição de posts
-PUT https://https://projeto-back-end-loadingjr.onrender.com/EditarPostagem/:id
+PUT {{Url}}/EditarPostagem/64fb9fbc-18c8-4c74-a95e-87188181b080
+Authorization:Bearer {{Token}}
+Content-Type: application/json
 
-//Token
-Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdlaWxtYSIsInBlcm1pc3Npb24iOjAsImlhdCI6MTcxNjQ5NjY3MywiZXhwIjoxNzE2NTAwMjczfQ.i6CtpajrB9PCy3PBmgBGrZSVWBlrsqMAgnwIDV7lRtg
-
-//Request body
     {
         "title":"Titulo do post",
         "description":"Descrição da postagem",
-        "post_type": "Tipo da postagem (edital, notícia, divulgação)",
-        "imagem": "Imagem (Opicional)"
+        "post_type": "2",
+        "imagem": "Mande a imagem aqui"
     }
 
 ###
 
 //Rota para edição de usuários
-PUT https://https://projeto-back-end-loadingjr.onrender.com/UserUpdate/:username
+PUT {{Url}}/UserUpdate/:username
+Authorization:Bearer {{Token}}
+Content-Type: application/json
 
-//Antigo username pasado pela url
-//Token
-Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdlaWxtYSIsInBlcm1pc3Npb24iOjAsImlhdCI6MTcxNjQ5NjY3MywiZXhwIjoxNzE2NTAwMjczfQ.i6CtpajrB9PCy3PBmgBGrZSVWBlrsqMAgnwIDV7lRtg
-
-//Request body
     {
         "username":"Novo username",
         "permission":"Nova permissão",
@@ -69,9 +57,9 @@ Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdlaW
 
 ###
 //Registar um usuário
-POST https://projeto-back-end-loadingjr.onrender.com/Registro
+POST {{Url}}/Registro
 Content-Type: application/json
-//Request body
+
 {
     "username": "test",
     "password": "0007",
@@ -80,29 +68,21 @@ Content-Type: application/json
 ###
 
 //Deletar um post
-DELETE https://projeto-back-end-loadingjr.onrender.com/DeletarPostagem/:id
-
-//Token, id do post deve ser passado pela url
-Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdlaWxtYSIsInBlcm1pc3Npb24iOjAsImlhdCI6MTcxNjQ5NjY3MywiZXhwIjoxNzE2NTAwMjczfQ.i6CtpajrB9PCy3PBmgBGrZSVWBlrsqMAgnwIDV7lRtg
+DELETE {{Url}}/DeletarPostagem/64fb9fbc-18c8-4c74-a95e-87188181b080
+Authorization:Bearer {{Token}}
 
 ###
 //Deletar um usuário
-DELETE https://projeto-back-end-loadingjr.onrender.com/DeleteUser/:username
-
-//Token, username do post deve ser passado pela url
-Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdlaWxtYSIsInBlcm1pc3Npb24iOjAsImlhdCI6MTcxNjQ5NjY3MywiZXhwIjoxNzE2NTAwMjczfQ.i6CtpajrB9PCy3PBmgBGrZSVWBlrsqMAgnwIDV7lRtg
+DELETE {{Url}}/DeleteUser/:username
+Authorization:Bearer {{Token}}
 
 ###
 //Rota para buscar um usuário
-GET https://projeto-back-end-loadingjr.onrender.com/User/:username
-//Username passado pela url
-Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdlaWxtYSIsInBlcm1pc3Npb24iOjAsImlhdCI6MTcxNjQ5NjY3MywiZXhwIjoxNzE2NTAwMjczfQ.i6CtpajrB9PCy3PBmgBGrZSVWBlrsqMAgnwIDV7lRtg
+GET {{Url}}/User/:username
+Authorization:Bearer {{Token}}
 
 
 ###
 //Rota que lista todos os usuário
-GET https://projeto-back-end-loadingjr.onrender.com/ListUsers
-Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdlaWxtYSIsInBlcm1pc3Npb24iOjAsImlhdCI6MTcxNjQ5NjY3MywiZXhwIjoxNzE2NTAwMjczfQ.i6CtpajrB9PCy3PBmgBGrZSVWBlrsqMAgnwIDV7lRtg
-
-
-
+GET {{Url}}/ListUsers
+Authorization:Bearer {{Token}}

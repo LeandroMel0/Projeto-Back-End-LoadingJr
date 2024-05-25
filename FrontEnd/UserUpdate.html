@@ -100,7 +100,7 @@
 
         document.getElementById('editUserForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Impede o envio padrão do formulário
-
+            
             const token = localStorage.getItem('jwtToken');
             const form = document.getElementById('editUserForm');
             const formData = new FormData(form);

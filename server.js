@@ -44,7 +44,6 @@ server.listen({
 
         const HeaderAuth = request.headers['authorization']
         const Token = HeaderAuth && HeaderAuth.split(" ")[1]
-
         if(!Token){
             return reply.status(401).json({msg: "Acesso negado!"})
         }
@@ -74,14 +73,39 @@ server.listen({
 
 //### ROTAS CRUD DOS POSTS DA API
     //Rota para criação de postagem 
-    server.post('/CriarPostagem',CheckToken,CheckPermType1,async( request, reply) =>{
+    server.post('/CriarPostagem',CheckToken,CheckPermType1,async(request, reply) =>{
         try{
         //Recebe as variaveis do formulario
-        const {title, description, post_type} = request.body
+        var {title, description, post_type} = request.body
+        post_type = Number(post_type);
+
         //Verifica a validade das informações
-        if(title == "" || description == "" || post_type == ""){
-            return reply.status(400).send({msg: 'Informações obrigatorias não definidas'})
-        }   
+        if(title == "" || title == null || title == undefined){
+            return reply.status(400).send({msg: 'Titulo inválido'})
+        }
+        if(description == "" || description == null || description == undefined){
+            return reply.status(400).send({msg: 'Descrição inválida'})
+        }
+        if(post_type == "" || post_type == null || post_type == undefined){
+          
+            return reply.status(400).send({msg: 'Tipo de postagem inválida'})
+        }
+        if(post_type != 1 && post_type != 2 && post_type != 3){
+            return reply.status(400).send({msg: 'Tipo de postagem inválida'})
+        } 
+        switch (post_type) {
+            case 1:
+                post_type = "Edital"
+                break;
+            case 2:
+                post_type = "Notícia"
+                break;
+            case 3:
+                post_type = "Divulgação"
+                break;
+            default:
+                break;
+        }    
         
         //Função que cria a postagem
         const PostagemId = randomUUID();
@@ -150,11 +174,36 @@ server.listen({
             //recebe o id da postagem
             const postagemid = request.params.id
             //pega as informações da postagem
-            const {title, description, post_type} = request.body
-            //Verifica a validade informações
-            if(title == "" || description == "" || post_type == ""){
-                return reply.status(400).send({ msg: 'Informações obrigatorias não definidas' })
+            var {title, description, post_type} = request.body
+            post_type = Number(post_type);
+
+             //Verifica a validade das informações
+            if(title == "" || title == null || title == undefined){
+                return reply.status(400).send({msg: 'Titulo inválido'})
             }
+            if(description == "" || description == null || description == undefined){
+                return reply.status(400).send({msg: 'Descrição inválida'})
+            }
+            if(post_type == "" || post_type == null || post_type == undefined){
+            
+                return reply.status(400).send({msg: 'Tipo de postagem inválida'})
+            }
+            if(post_type != 1 && post_type != 2 && post_type != 3){
+                return reply.status(400).send({msg: 'Tipo de postagem inválida'})
+            } 
+            switch (post_type) {
+                case 1:
+                    post_type = "Edital"
+                    break;
+                case 2:
+                    post_type = "Notícia"
+                    break;
+                case 3:
+                    post_type = "Divulgação"
+                    break;
+                default:
+                    break;
+            } 
             
             var imagem = null
             //Verifica se foi enviado um arquivo
@@ -181,8 +230,9 @@ server.listen({
                     imagem: HasImg,
                     att_by: request.requestUser,
                 })
-            return reply.status(201).json({msg: "Post enviado com sucesso!"})
+            return reply.status(200).json({msg: "Post editado com sucesso!"})
         }catch (error){
+            console.log(error)
             return reply.status(500).send({msg: 'Falha ao editar o post'})
         }
 
@@ -197,7 +247,7 @@ server.listen({
             //Delata a postagem do banco de dados
             await database.delete(postagemid)
 
-            return reply.status(204).send()
+            return reply.status(200).json({msg: "Post deletado com sucesso"})
         }catch{
             reply.status(500),json({msg: 'Falha ao deletar o post'})
             }
@@ -468,7 +518,7 @@ server.listen({
     //Forma a data no formato DD/MM/YYYY HH:mm
     function GetDate(){
 
-        // Obter a data atual
+        // Obter a data atual no horário de brasília 
         const dataAtual = moment.tz("America/Sao_Paulo");
 
         // Formatar a data e hora
