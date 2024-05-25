@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { json } from 'express';
 import fileUpload from 'express-fileupload';
 import { Memoria } from "./databaseonline.js";
 import { randomUUID } from "node:crypto"
@@ -6,6 +6,7 @@ import fs from 'fs/promises';
 
 //Manipulação de data
 import moment from 'moment';
+import 'moment-timezone'
 
 //Para autenticação JWT
 import 'dotenv/config'
@@ -56,7 +57,7 @@ server.listen({
             next();
 
         }catch{
-            return reply.status(400).json({msg: "Token inválido!"})
+            return reply.status(401).json({msg: "Token inválido!"})
         }
     }
 
@@ -79,7 +80,7 @@ server.listen({
         const {title, description, post_type} = request.body
         //Verifica a validade das informações
         if(title == "" || description == "" || post_type == ""){
-            return reply.status(422).send({msg: 'Informações obrigatorias não definidas'})
+            return reply.status(400).send({msg: 'Informações obrigatorias não definidas'})
         }   
         
         //Função que cria a postagem
@@ -90,7 +91,7 @@ server.listen({
         if(request.files != null){
             //Verifica se o arquivo enviado é uma imagem
             if (!(/^image\//.test(request.files.imagem.mimetype))){
-                return reply.status(422).send({msg:'O arquivo enviado não é uma imagem'})
+                return reply.status(400).send({msg:'O arquivo enviado não é uma imagem'})
             } 
             HasImg = Boolean(true)
             imagem = request.files.imagem
@@ -114,10 +115,10 @@ server.listen({
         })
             
             //reposta da API
-            return reply.status(200).json({msg: "Postagem criada com sucesso"})
+            return reply.status(201).json({msg: "Postagem criada com sucesso"})
         }catch (error){
             console.log(error)
-            return reply.status(204).json({msg: "Erro ao criar o post"})
+            return reply.status(500).json({msg: "Erro ao criar o post"})
         }
     })
 
@@ -134,12 +135,12 @@ server.listen({
             
             //Em caso de erro no range da lista paginada
             if(postagens == -1){
-                return reply.status(416).send({ msg: 'Intervalo de dados invalidos' })
+                return reply.status(400).send({ msg: 'Intervalo de dados invalidos' })
             }
             reply.json(postagens)
             
         }catch{
-            reply.send("Erro na busca")
+            reply.status(500).json({msg: "Erro na busca"})
         }
     })
 
@@ -182,7 +183,7 @@ server.listen({
                 })
             return reply.status(201).json({msg: "Post enviado com sucesso!"})
         }catch (error){
-            return reply.status(402).send({msg: 'Falha ao editar o post'})
+            return reply.status(500).send({msg: 'Falha ao editar o post'})
         }
 
     })
@@ -198,7 +199,7 @@ server.listen({
 
             return reply.status(204).send()
         }catch{
-            reply.send({error: 'Falha ao deletar o post'})
+            reply.status(500),json({msg: 'Falha ao deletar o post'})
             }
 
     })
@@ -225,10 +226,10 @@ server.listen({
             //Verifica as iformações no banco de dados
             const LoginTry = await database.login(username,password);
             if(LoginTry == -1){
-                reply.status(400).json({msg: "Usuário não encontrado"})
+                reply.status(404).json({msg: "Usuário não encontrado"})
             } else
             if(LoginTry == -2){
-                reply.status(400).json({msg: "Senha incorreta"})
+                reply.status(401).json({msg: "Senha incorreta"})
             } else
             if(LoginTry == true){
                 const secret = process.env.SECRET
@@ -241,11 +242,11 @@ server.listen({
                 )
                 reply.status(200).json({msg: "Autendicado com sucesso", token})
             }else{
-                reply.status(301).json({msg: "Erro ao fazer login"})
+                reply.status(500).json({msg: "Erro ao fazer login"})
             }
         }catch (error){
             console.log("Erro ao fazer login", error)
-            reply.status(301).json({msg: "Erro ao tentar fazer login"})
+            reply.status(500).json({msg: "Erro ao tentar fazer login"})
         }
 
     })   
@@ -256,13 +257,13 @@ server.listen({
         var {username,password,checkPassword} = request.body
 
         if(checkPassword!=password){
-            return reply.status(401).json({msg: "As senhas não são iguais"})
+            return reply.status(400).json({msg: "As senhas não são iguais"})
         }
         if(username == "" || username == null || username == undefined){
-            return reply.status(401).json({msg: "Nome de usuário invalido"})
+            return reply.status(400).json({msg: "Nome de usuário invalido"})
         }
         if(password == "" || password == null || password == undefined){
-            return reply.status(401).json({msg: "Senha invalida"})
+            return reply.status(400).json({msg: "Senha invalida"})
         }
 
         username = username.toLowerCase();
@@ -275,10 +276,10 @@ server.listen({
                 return reply.status(401).json({msg: "Nome de usuário em uso"})
             }
             if(response == true){
-                return reply.status(200).json({msg: "Novo usuário criado"})
+                return reply.status(201).json({msg: "Novo usuário criado"})
             }
         }catch{
-            return reply.status(400).json({msg: "Erro ao cadastrar usuário"})
+            return reply.status(500).json({msg: "Erro ao cadastrar usuário"})
         }
     }) 
 
@@ -296,12 +297,12 @@ server.listen({
         else{
             const retorno = await database.deleteUser(deleteUser)
             if(retorno == -1){
-                reply.status(400).json({msg: "Usuário não encontrado"})
+                reply.status(404).json({msg: "Usuário não encontrado"})
             }else 
             if(retorno == true){
-                reply.status(201).json({msg: "Deletado com sucesso"})
+                reply.status(200).json({msg: "Deletado com sucesso"})
             }else{
-                reply.status(400).json({msg: "Ocorreu um erro ao delatar o usuário"})
+                reply.status(500).json({msg: "Ocorreu um erro ao delatar o usuário"})
             }
         }
 
@@ -326,11 +327,11 @@ server.listen({
                 if(retorno == -1){
                     return reply.status(401).json({msg: "Nome de usuário já ultilizado!"})
                 }else{
-                    return reply.status(201).json({msg: "Usuário atualizado com sucesso"})
+                    return reply.status(200).json({msg: "Usuário atualizado com sucesso"})
                 }
             }catch (error){
                 console.log(error)
-                return reply.status(401).json({msg: "Erro ao atualizar usuário"})
+                return reply.status(500).json({msg: "Erro ao atualizar usuário"})
             }
         }
 
@@ -468,7 +469,7 @@ server.listen({
     function GetDate(){
 
         // Obter a data atual
-        const dataAtual = moment();
+        const dataAtual = moment.tz("America/Sao_Paulo");
 
         // Formatar a data e hora
         const dataHoraFormatada = dataAtual.format('DD-MM-YYYY HH:mm');

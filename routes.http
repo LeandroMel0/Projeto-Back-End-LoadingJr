@@ -1,27 +1,108 @@
-POST http://localhost:3333/Login
+///### Toda rota que não seja GET exige o token, menos a rota de login ou registro
+
+//fazer login, retona o token
+POST https://projeto-back-end-loadingjr.onrender.com/Login
 Content-Type: application/json
 
+//Request body
 {
-    "username": "geilma",
-    "password": "0007"
+    "username": "Nome_de_usuário",
+    "password": "Senha"
 }
 
 ###
 
-POST http://localhost:3333/Registro
-//Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImxlYW5kcm8iLCJwZXJtaXNzaW9uIjoyLCJpYXQiOjE3MTY0OTQzMDIsImV4cCI6MTcxNjQ5NDMzMn0.EQhVvguw9ApqsgU8Lt5ZhtCU-whSWTa-CTYG5ZyzP0U
-Content-Type: application/json
+//Criar uma postagem
+POST https://projeto-back-end-loadingjr.onrender.com/CriarPostagem
 
+//Token
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdlaWxtYSIsInBlcm1pc3Npb24iOjAsImlhdCI6MTcxNjQ5NjY3MywiZXhwIjoxNzE2NTAwMjczfQ.i6CtpajrB9PCy3PBmgBGrZSVWBlrsqMAgnwIDV7lRtg
+
+//Request body
+    {
+        "title":"Titulo do post",
+        "description":"Descrição da postagem",
+        "post_type": "Tipo da postagem (edital, notícia, divulgação)",
+        "imagem": "Imagem (Opicional)"
+    }
+
+
+###
+//Rota que retona posts
+GET https://projeto-back-end-loadingjr.onrender.com/postagens
+
+//Podem ser passados parametros pela url
+//Para lista paginada pagNumber, postPerPage
+//Para pesquisa search
+//Se não forem passados parametros sera retornada toda a lista de posts
+
+###
+//Rota para edição de posts
+PUT https://https://projeto-back-end-loadingjr.onrender.com/EditarPostagem/:id
+
+//Token
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdlaWxtYSIsInBlcm1pc3Npb24iOjAsImlhdCI6MTcxNjQ5NjY3MywiZXhwIjoxNzE2NTAwMjczfQ.i6CtpajrB9PCy3PBmgBGrZSVWBlrsqMAgnwIDV7lRtg
+
+//Request body
+    {
+        "title":"Titulo do post",
+        "description":"Descrição da postagem",
+        "post_type": "Tipo da postagem (edital, notícia, divulgação)",
+        "imagem": "Imagem (Opicional)"
+    }
+
+###
+
+//Rota para edição de usuários
+PUT https://https://projeto-back-end-loadingjr.onrender.com/UserUpdate/:username
+
+//Antigo username pasado pela url
+//Token
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdlaWxtYSIsInBlcm1pc3Npb24iOjAsImlhdCI6MTcxNjQ5NjY3MywiZXhwIjoxNzE2NTAwMjczfQ.i6CtpajrB9PCy3PBmgBGrZSVWBlrsqMAgnwIDV7lRtg
+
+//Request body
+    {
+        "username":"Novo username",
+        "permission":"Nova permissão",
+
+    }
+
+###
+//Registar um usuário
+POST https://projeto-back-end-loadingjr.onrender.com/Registro
+Content-Type: application/json
+//Request body
 {
     "username": "test",
-    "password": "0007"
+    "password": "0007",
+    "checkPassword": "0007"
 }
 ###
-DELETE http://localhost:3333/DeleteUser/test
+
+//Deletar um post
+DELETE https://projeto-back-end-loadingjr.onrender.com/DeletarPostagem/:id
+
+//Token, id do post deve ser passado pela url
 Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdlaWxtYSIsInBlcm1pc3Npb24iOjAsImlhdCI6MTcxNjQ5NjY3MywiZXhwIjoxNzE2NTAwMjczfQ.i6CtpajrB9PCy3PBmgBGrZSVWBlrsqMAgnwIDV7lRtg
-Content-Type:application/json
+
+###
+//Deletar um usuário
+DELETE https://projeto-back-end-loadingjr.onrender.com/DeleteUser/:username
+
+//Token, username do post deve ser passado pela url
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdlaWxtYSIsInBlcm1pc3Npb24iOjAsImlhdCI6MTcxNjQ5NjY3MywiZXhwIjoxNzE2NTAwMjczfQ.i6CtpajrB9PCy3PBmgBGrZSVWBlrsqMAgnwIDV7lRtg
+
+###
+//Rota para buscar um usuário
+GET https://projeto-back-end-loadingjr.onrender.com/User/:username
+//Username passado pela url
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdlaWxtYSIsInBlcm1pc3Npb24iOjAsImlhdCI6MTcxNjQ5NjY3MywiZXhwIjoxNzE2NTAwMjczfQ.i6CtpajrB9PCy3PBmgBGrZSVWBlrsqMAgnwIDV7lRtg
 
 
 ###
-DELETE http://localhost:3333/postagem/6
+//Rota que lista todos os usuário
+GET https://projeto-back-end-loadingjr.onrender.com/ListUsers
+Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImdlaWxtYSIsInBlcm1pc3Npb24iOjAsImlhdCI6MTcxNjQ5NjY3MywiZXhwIjoxNzE2NTAwMjczfQ.i6CtpajrB9PCy3PBmgBGrZSVWBlrsqMAgnwIDV7lRtg
+
+
 
